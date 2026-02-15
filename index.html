@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MyTasks</title>
+    <style>
+        :root {
+            --bg: #fdfdfd;
+            --text: #333;
+            --accent: #ff5e5e;
+        }
+
+        body {
+            font-family: -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 50px 20px;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 30px;
+        }
+
+        li {
+            background: white;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete {
+            color: var(--accent);
+            font-weight: bold;
+            cursor: pointer;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tasks</h1>
+    <input type="text" id="taskInput" placeholder="What needs doing?">
+    <ul id="taskList"></ul>
+
+    <script>
+        const input = document.getElementById('taskInput');
+        const list = document.getElementById('taskList');
+        let tasks = JSON.parse(localStorage.getItem('myTasks')) || [];
+
+        function render() {
+            list.innerHTML = tasks.map((t, i) => `<li>${t} <span class="delete" onclick="remove(${i})">✕</span></li>`).join('');
+            localStorage.setItem('myTasks', JSON.stringify(tasks));
+        }
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && input.value) {
+                tasks.push(input.value);
+                input.value = '';
+                render();
+            }
+        });
+
+        window.remove = (i) => { tasks.splice(i, 1); render(); };
+        render();
+    </script>
+</body>
+
+</html>
