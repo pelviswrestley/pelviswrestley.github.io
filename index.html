@@ -70,6 +70,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .delete {
@@ -110,7 +114,7 @@
 
         function render() {
             list.innerHTML = tasks.map((t, i) => `
-                <li data-index="${i}">
+                <li data-index="${i}" ondblclick="editTask(${i})">
                     <span>${t}</span>
                     <span class="delete" onclick="remove(${i})">✕</span>
                 </li>
@@ -128,6 +132,43 @@
         });
 
         window.remove = (i) => { tasks.splice(i, 1); render(); };
+
+        window.editTask = (i) => {
+            const item = list.children[i];
+            const span = item.querySelector('span:not(.delete)');
+            const currentText = tasks[i];
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            // input.style.width = '100%'; 
+            input.style.flex = '1';
+            input.style.minWidth = '0';
+            input.style.marginRight = '10px';
+            input.style.boxSizing = 'border-box';
+
+            // Interaction: Commit on Enter
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    commitEdit(i, input.value);
+                }
+            });
+
+            // Optional: Commit on blur to hide keyboard naturally
+            input.addEventListener('blur', () => {
+                commitEdit(i, input.value);
+            });
+
+            item.replaceChild(input, span);
+            input.focus();
+        };
+
+        function commitEdit(i, newText) {
+            if (newText.trim()) {
+                tasks[i] = newText.trim();
+            }
+            render();
+        }
 
         // Drag and Drop Logic
         let dragTimer;
