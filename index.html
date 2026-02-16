@@ -32,6 +32,8 @@
             color: var(--text);
             padding: 50px 20px;
             margin: 0;
+            overscroll-behavior-y: none;
+            /* Prevent pull-to-refresh interference */
         }
 
         h1 {
@@ -103,7 +105,7 @@
 </head>
 
 <body>
-    <h1>BLIPPER</h1>
+    <h1>:)</h1>
     <input type="text" id="taskInput" placeholder="What needs doing?">
     <ul id="taskList"></ul>
 
@@ -186,6 +188,7 @@
                 item.addEventListener('touchstart', handleStart, { passive: false });
                 item.addEventListener('touchend', handleEnd);
                 item.addEventListener('touchmove', handleMove, { passive: false });
+                item.addEventListener('touchcancel', handleEnd);
 
                 // Mouse events
                 item.addEventListener('mousedown', handleStart);
@@ -232,9 +235,8 @@
 
         function handleMove(e) {
             if (!activeItem) {
-                // If we move too much before the timer fires, cancel the timer
-                // We can do a rudimentary check here if needed, but for now strict timer is fine.
-                // Actually, usually you want to cancel if user scrolls.
+                // If the user moves before the timer fires, cancel the timer (it's a scroll)
+                clearTimeout(dragTimer);
                 return;
             }
             // For simplicity in this vanilla implementation, we rely on the timer.
