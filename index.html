@@ -123,10 +123,11 @@
             initDrag();
         }
 
-        input.addEventListener('keypress', (e) => {
+        input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && input.value) {
                 tasks.push(input.value);
                 input.value = '';
+                input.blur();
                 render();
             }
         });
